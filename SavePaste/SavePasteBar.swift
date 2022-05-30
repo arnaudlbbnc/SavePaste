@@ -35,8 +35,26 @@ final class SavePasteBar: NSObject {
 
         let mainMenu = NSMenu()
 
+        createSavedMenuItems(mainMenu: mainMenu)
+
+        mainMenu.addItem(NSMenuItem.separator())
+
+        createPinnedMenuItems(mainMenu: mainMenu)
+
+        mainMenu.addItem(NSMenuItem.separator())
+
+        createLaunchAtLoginMenuItem(mainMenu: mainMenu)
+
+        mainMenu.addItem(NSMenuItem.separator())
+
+        createQuitMenuItem(mainMenu: mainMenu)
+
+        statusItem.menu = mainMenu
+    }
+
+    private func createSavedMenuItems(mainMenu: NSMenu) {
         let saveItem = NSMenuItem()
-        saveItem.title = "Save from clipboard"
+        saveItem.title = NSLocalizedString("actions.save", comment: "")
         saveItem.target = self
         saveItem.action = #selector(saveFromPasteboard)
         saveItem.isEnabled = NSPasteboard.general.string(forType: .string) != nil
@@ -57,23 +75,23 @@ final class SavePasteBar: NSObject {
         savedsMenu.addItem(NSMenuItem.separator())
 
         let resetSavedItem = NSMenuItem()
-        resetSavedItem.title = "Clear"
+        resetSavedItem.title = NSLocalizedString("actions.clear", comment: "")
         resetSavedItem.target = self
         resetSavedItem.action = #selector(resetSaved)
 
         savedsMenu.addItem(resetSavedItem)
 
         let savedsMenuItem = NSMenuItem()
-        savedsMenuItem.title = "Saved texts"
+        savedsMenuItem.title = NSLocalizedString("list.saved", comment: "")
         savedsMenuItem.isEnabled = !savedPastes.isEmpty
         savedsMenuItem.submenu = savedsMenu
 
         mainMenu.addItem(savedsMenuItem)
+    }
 
-        mainMenu.addItem(NSMenuItem.separator())
-
+    private func createPinnedMenuItems(mainMenu: NSMenu) {
         let pinItem = NSMenuItem()
-        pinItem.title = "Pin from clipboard"
+        pinItem.title = NSLocalizedString("actions.pin", comment: "")
         pinItem.target = self
         pinItem.action = #selector(pinFromPasteboard)
         pinItem.isEnabled = NSPasteboard.general.string(forType: .string) != nil
@@ -94,39 +112,37 @@ final class SavePasteBar: NSObject {
         pinnedsMenu.addItem(NSMenuItem.separator())
 
         let resetPinnedItem = NSMenuItem()
-        resetPinnedItem.title = "Clear"
+        resetPinnedItem.title = NSLocalizedString("actions.clear", comment: "")
         resetPinnedItem.target = self
         resetPinnedItem.action = #selector(resetPinned)
 
         pinnedsMenu.addItem(resetPinnedItem)
 
         let pinnedsMenuItem = NSMenuItem()
-        pinnedsMenuItem.title = "Pinned texts"
+        pinnedsMenuItem.title = NSLocalizedString("list.pinned", comment: "")
         pinnedsMenuItem.isEnabled = !pinnedPastes.isEmpty
         pinnedsMenuItem.submenu = pinnedsMenu
 
         mainMenu.addItem(pinnedsMenuItem)
+    }
 
-        mainMenu.addItem(NSMenuItem.separator())
-
+    private func createLaunchAtLoginMenuItem(mainMenu: NSMenu) {
         let launchAtLoginItem = NSMenuItem()
-        launchAtLoginItem.title = "Launch at login"
+        launchAtLoginItem.title = NSLocalizedString("actions.launchAtLogin", comment: "")
         launchAtLoginItem.state = Preferences.launchAtLoginEnabled ? .on : .off
         launchAtLoginItem.target = self
         launchAtLoginItem.action = #selector(launchAtLogin(_:))
 
         mainMenu.addItem(launchAtLoginItem)
+    }
 
-        mainMenu.addItem(NSMenuItem.separator())
-
+    private func createQuitMenuItem(mainMenu: NSMenu) {
         let quitItem = NSMenuItem()
-        quitItem.title = "Quit"
+        quitItem.title = NSLocalizedString("actions.quit", comment: "")
         quitItem.target = self
         quitItem.action = #selector(quit)
 
         mainMenu.addItem(quitItem)
-
-        statusItem.menu = mainMenu
     }
 
     // MARK: - Actions

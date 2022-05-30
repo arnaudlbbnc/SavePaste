@@ -1,0 +1,16 @@
+/* 
+  Localizable.strings
+  SavePaste
+
+  Created by Arnaud LE BOURBLANC on 30/05/2022.
+  
+*/
+
+"actions.save" = "Save from clipboard";
+"actions.pin" = "Pin from clipboard";
+"actions.clear" = "Clear";
+"actions.launchAtLogin" = "Launch at login";
+"actions.quit" = "Quit";
+
+"list.saved" = "Saved texts";
+"list.pinned" = "Pinned texts";

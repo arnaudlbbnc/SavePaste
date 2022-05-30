@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C7BCA89A2845454B00698273 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C7BCA8992845454B00698273 /* Localizable.strings */; };
 		C7CD9E9E27FA08E700668B8A /* SavePasteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7CD9E9D27FA08E700668B8A /* SavePasteApp.swift */; };
 		C7CD9EA227FA08E900668B8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C7CD9EA127FA08E900668B8A /* Assets.xcassets */; };
 		C7CD9EA527FA08E900668B8A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C7CD9EA427FA08E900668B8A /* Preview Assets.xcassets */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C7BCA8992845454B00698273 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		C7CD9E9A27FA08E700668B8A /* SavePaste.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SavePaste.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7CD9E9D27FA08E700668B8A /* SavePasteApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePasteApp.swift; sourceTree = "<group>"; };
 		C7CD9EA127FA08E900668B8A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -46,6 +48,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C7BCA8982845453700698273 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C7CD9EA127FA08E900668B8A /* Assets.xcassets */,
+				C7BCA8992845454B00698273 /* Localizable.strings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		C7CD9E9127FA08E700668B8A = {
 			isa = PBXGroup;
 			children = (
@@ -65,13 +76,13 @@
 		C7CD9E9C27FA08E700668B8A /* SavePaste */ = {
 			isa = PBXGroup;
 			children = (
+				C7BCA8982845453700698273 /* Resources */,
 				C7CD9EB327FA1A3B00668B8A /* Info.plist */,
 				C7CD9EB127FA14CE00668B8A /* AppDelegate.swift */,
 				C7CD9E9D27FA08E700668B8A /* SavePasteApp.swift */,
 				C7CD9EB427FA1C9F00668B8A /* SavePasteBar.swift */,
 				C7CD9EA627FA08E900668B8A /* Persistence.swift */,
 				C7CD9EB627FA50E800668B8A /* Support */,
-				C7CD9EA127FA08E900668B8A /* Assets.xcassets */,
 				C7CD9EAB27FA08E900668B8A /* SavePaste.entitlements */,
 				C7CD9EA827FA08E900668B8A /* SavePaste.xcdatamodeld */,
 				C7CD9EA327FA08E900668B8A /* Preview Content */,
@@ -157,6 +168,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C7CD9EA527FA08E900668B8A /* Preview Assets.xcassets in Resources */,
+				C7BCA89A2845454B00698273 /* Localizable.strings in Resources */,
 				C7CD9EA227FA08E900668B8A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
