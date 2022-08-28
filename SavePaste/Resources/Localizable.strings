@@ -6,11 +6,14 @@
   
 */
 
-"actions.save" = "Save from clipboard";
-"actions.pin" = "Pin from clipboard";
 "actions.clear" = "Clear";
+"actions.copy" = "Copy";
 "actions.launchAtLogin" = "Launch at login";
+"actions.paste" = "Paste";
+"actions.pin" = "Pin from clipboard";
+"actions.remove" = "Remove";
+"actions.save" = "Save from clipboard";
 "actions.quit" = "Quit";
 
-"list.saved" = "Saved texts";
 "list.pinned" = "Pinned texts";
+"list.saved" = "Saved texts";

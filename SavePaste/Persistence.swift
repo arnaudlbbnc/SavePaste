@@ -48,4 +48,12 @@ struct PersistenceController {
 
         _ = try? self.container.viewContext.execute(deleteRequest)
     }
+
+    func removeText(_ text: String) {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Paste.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "text == %@", text)
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+
+        _ = try? self.container.viewContext.execute(deleteRequest)
+    }
 }

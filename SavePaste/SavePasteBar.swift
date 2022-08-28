@@ -64,12 +64,7 @@ final class SavePasteBar: NSObject {
         let savedsMenu = NSMenu()
         let savedPastes = PersistenceController.shared.getTexts(pinned: false)
         for savedPaste in savedPastes {
-            let savedMenuItem = NSMenuItem()
-            savedMenuItem.title = String(savedPaste.text?.prefix(15) ?? "?")
-            savedMenuItem.target = self
-            savedMenuItem.action = #selector(copyToPasteboard(_:))
-            savedMenuItem.representedObject = savedPaste
-            savedsMenu.addItem(savedMenuItem)
+            createPasteMenuItem(parentMenu: savedsMenu, paste: savedPaste)
         }
 
         savedsMenu.addItem(NSMenuItem.separator())
@@ -101,12 +96,7 @@ final class SavePasteBar: NSObject {
         let pinnedsMenu = NSMenu()
         let pinnedPastes = PersistenceController.shared.getTexts(pinned: true)
         for pinnedPaste in pinnedPastes {
-            let pinnedMenuItem = NSMenuItem()
-            pinnedMenuItem.title = String(pinnedPaste.text?.prefix(15) ?? "?")
-            pinnedMenuItem.target = self
-            pinnedMenuItem.action = #selector(copyToPasteboard(_:))
-            pinnedMenuItem.representedObject = pinnedPaste
-            pinnedsMenu.addItem(pinnedMenuItem)
+            createPasteMenuItem(parentMenu: pinnedsMenu, paste: pinnedPaste)
         }
 
         pinnedsMenu.addItem(NSMenuItem.separator())
@@ -124,6 +114,41 @@ final class SavePasteBar: NSObject {
         pinnedsMenuItem.submenu = pinnedsMenu
 
         mainMenu.addItem(pinnedsMenuItem)
+    }
+
+    private func createPasteMenuItem(parentMenu: NSMenu, paste: Paste) {
+        let pasteMenu = NSMenu()
+
+        let pasteItem = NSMenuItem()
+        pasteItem.title = NSLocalizedString("actions.paste", comment: "")
+        pasteItem.target = self
+        pasteItem.action = #selector(paste(_:))
+        pasteItem.representedObject = paste
+        pasteMenu.addItem(pasteItem)
+
+        let copyItem = NSMenuItem()
+        copyItem.title = NSLocalizedString("actions.copy", comment: "")
+        copyItem.target = self
+        copyItem.action = #selector(copyToPasteboard(_:))
+        copyItem.representedObject = paste
+        pasteMenu.addItem(copyItem)
+
+        let removeItem = NSMenuItem()
+        removeItem.title = NSLocalizedString("actions.remove", comment: "")
+        removeItem.target = self
+        removeItem.action = #selector(removePaste(_:))
+        removeItem.representedObject = paste
+        pasteMenu.addItem(removeItem)
+
+
+        let menuItem = NSMenuItem()
+        menuItem.title = String(paste.text?.prefix(15) ?? "?")
+        menuItem.target = self
+        menuItem.action = #selector(paste(_:))
+        menuItem.representedObject = paste
+        menuItem.submenu = pasteMenu
+
+        parentMenu.addItem(menuItem)
     }
 
     private func createLaunchAtLoginMenuItem(mainMenu: NSMenu) {
@@ -163,14 +188,21 @@ final class SavePasteBar: NSObject {
     }
 
     @objc private func copyToPasteboard(_ sender: Any?) {
-        guard let sender = sender as? NSMenuItem,
-            let representedObject = sender.representedObject as? Paste,
-            let text = representedObject.text else {
+        guard let text = pasteFromMenuItem(sender)?.text else {
             return
         }
 
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(text, forType: .string)
+    }
+
+    @objc private func removePaste(_ sender: Any?) {
+        guard let text = pasteFromMenuItem(sender)?.text else {
+            return
+        }
+
+        PersistenceController.shared.removeText(text)
+        createMenu()
     }
 
     @objc private func resetSaved() {
@@ -190,5 +222,32 @@ final class SavePasteBar: NSObject {
 
     @objc private func quit() {
         NSApplication.shared.terminate(nil)
+    }
+
+    private func pasteFromMenuItem(_ menuItem: Any?) -> Paste? {
+        guard let menuItem = menuItem as? NSMenuItem else {
+            return nil
+        }
+
+        return menuItem.representedObject as? Paste
+
+    }
+
+    @objc private func paste(_ sender: Any?) {
+        guard let text = pasteFromMenuItem(sender)?.text else {
+            return
+        }
+
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(text, forType: .string)
+
+        let source = CGEventSource(stateID: CGEventSourceStateID.combinedSessionState);
+
+        let keyDown = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: true);
+        keyDown?.flags = CGEventFlags.maskCommand;
+        let keyUp = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: false);
+
+        keyDown?.post(tap: .cgAnnotatedSessionEventTap)
+        keyUp?.post(tap: .cgAnnotatedSessionEventTap)
     }
 }
