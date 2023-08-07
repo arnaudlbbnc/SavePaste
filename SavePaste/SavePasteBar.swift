@@ -39,10 +39,6 @@ final class SavePasteBar: NSObject {
 
         mainMenu.addItem(NSMenuItem.separator())
 
-        createPinnedMenuItems(mainMenu: mainMenu)
-
-        mainMenu.addItem(NSMenuItem.separator())
-
         createLaunchAtLoginMenuItem(mainMenu: mainMenu)
 
         mainMenu.addItem(NSMenuItem.separator())
@@ -62,7 +58,7 @@ final class SavePasteBar: NSObject {
         mainMenu.addItem(saveItem)
 
         let savedsMenu = NSMenu()
-        let savedPastes = PersistenceController.shared.getTexts(pinned: false)
+        let savedPastes = PersistenceController.shared.getTexts()
         for savedPaste in savedPastes {
             createPasteMenuItem(parentMenu: savedsMenu, paste: savedPaste)
         }
@@ -82,38 +78,6 @@ final class SavePasteBar: NSObject {
         savedsMenuItem.submenu = savedsMenu
 
         mainMenu.addItem(savedsMenuItem)
-    }
-
-    private func createPinnedMenuItems(mainMenu: NSMenu) {
-        let pinItem = NSMenuItem()
-        pinItem.title = NSLocalizedString("actions.pin", comment: "")
-        pinItem.target = self
-        pinItem.action = #selector(pinFromPasteboard)
-        pinItem.isEnabled = NSPasteboard.general.string(forType: .string) != nil
-
-        mainMenu.addItem(pinItem)
-
-        let pinnedsMenu = NSMenu()
-        let pinnedPastes = PersistenceController.shared.getTexts(pinned: true)
-        for pinnedPaste in pinnedPastes {
-            createPasteMenuItem(parentMenu: pinnedsMenu, paste: pinnedPaste)
-        }
-
-        pinnedsMenu.addItem(NSMenuItem.separator())
-
-        let resetPinnedItem = NSMenuItem()
-        resetPinnedItem.title = NSLocalizedString("actions.clear", comment: "")
-        resetPinnedItem.target = self
-        resetPinnedItem.action = #selector(resetPinned)
-
-        pinnedsMenu.addItem(resetPinnedItem)
-
-        let pinnedsMenuItem = NSMenuItem()
-        pinnedsMenuItem.title = NSLocalizedString("list.pinned", comment: "")
-        pinnedsMenuItem.isEnabled = !pinnedPastes.isEmpty
-        pinnedsMenuItem.submenu = pinnedsMenu
-
-        mainMenu.addItem(pinnedsMenuItem)
     }
 
     private func createPasteMenuItem(parentMenu: NSMenu, paste: Paste) {
@@ -179,14 +143,6 @@ final class SavePasteBar: NSObject {
         createMenu()
     }
 
-    @objc private func pinFromPasteboard() {
-        guard let text = NSPasteboard.general.string(forType: .string) else {
-            return
-        }
-        PersistenceController.shared.saveText(text, pinned: true)
-        createMenu()
-    }
-
     @objc private func copyToPasteboard(_ sender: Any?) {
         guard let text = pasteFromMenuItem(sender)?.text else {
             return
@@ -206,12 +162,7 @@ final class SavePasteBar: NSObject {
     }
 
     @objc private func resetSaved() {
-        PersistenceController.shared.resetTexts(pinned: false)
-        createMenu()
-    }
-
-    @objc private func resetPinned() {
-        PersistenceController.shared.resetTexts(pinned: true)
+        PersistenceController.shared.resetTexts()
         createMenu()
     }
 
@@ -238,6 +189,8 @@ final class SavePasteBar: NSObject {
             return
         }
 
+        let currentPasteboard = getCurrentPasteboardDatas()
+
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(text, forType: .string)
 
@@ -249,5 +202,29 @@ final class SavePasteBar: NSObject {
 
         keyDown?.post(tap: .cgAnnotatedSessionEventTap)
         keyUp?.post(tap: .cgAnnotatedSessionEventTap)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
+            self?.setBackPasteboardData(pasteboard: currentPasteboard)
+        }
+    }
+
+    private func getCurrentPasteboardDatas() -> [(type: NSPasteboard.PasteboardType, data: Data)] {
+        guard let types = NSPasteboard.general.types else {
+            return []
+        }
+
+        var currentPasteboard: [(type: NSPasteboard.PasteboardType, data: Data)] = []
+        for type in types {
+            if let data = NSPasteboard.general.data(forType: type) {
+                currentPasteboard.append((type, data))
+            }
+        }
+        return currentPasteboard
+    }
+
+    private func setBackPasteboardData(pasteboard: [(type: NSPasteboard.PasteboardType, data: Data)]) {
+        for (type, data) in pasteboard {
+            NSPasteboard.general.setData(data, forType: type)
+        }
     }
 }

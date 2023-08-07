@@ -15,5 +15,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
   func applicationDidFinishLaunching(_ notification: Notification) {
       savePasteBar = .init()
+
+      if let window = NSApplication.shared.windows.first {
+          window.close()
+      }
   }
 }

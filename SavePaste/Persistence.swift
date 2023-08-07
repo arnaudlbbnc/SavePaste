@@ -24,26 +24,22 @@ struct PersistenceController {
         })
     }
 
-    func saveText(_ text: String,
-                  pinned: Bool = false) {
+    func saveText(_ text: String) {
         let context = self.container.viewContext
 
         let newPaste = Paste(context: context)
         newPaste.text = text
-        newPaste.pinned = pinned
 
         try? context.save()
     }
 
-    func getTexts(pinned: Bool = false) -> [Paste] {
+    func getTexts() -> [Paste] {
         let fetchRequest = Paste.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "pinned == %@", NSNumber(value: pinned))
         return (try? self.container.viewContext.fetch(fetchRequest)) ?? []
     }
 
-    func resetTexts(pinned: Bool = false) {
+    func resetTexts() {
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Paste.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "pinned == %@", NSNumber(value: pinned))
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
 
         _ = try? self.container.viewContext.execute(deleteRequest)
